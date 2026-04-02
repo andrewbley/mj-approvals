@@ -215,10 +215,11 @@
   @media (max-width: 600px) {
     .page { padding: 1.6rem 1.2rem 1.2rem; }
     col.col-num { width: 1.4rem; }
-    col.col-assets { width: 52px; }
+    col.col-assets { width: 44px; }
     tbody td { padding-right: 0.4rem; }
     tbody td:last-child { padding-right: 0; }
     .cell-name { font-size: 0.9rem; }
+    .asset-btn { font-size: 0.6rem; padding: 0.3rem 0.5rem; letter-spacing: 0.06em; }
     .flyout { width: 100vw; right: -100vw; }
     .flyout.open { right: 0; }
     .cal-item { grid-template-columns: 1.4rem 5.5rem 1fr; }
@@ -385,7 +386,7 @@ const PHASE2_OVERVIEW = `<div style="display:grid;grid-template-columns:1fr 1fr;
 const PHASES = [
   {
     id: 'phase-1',
-    label: 'Phase 1 — The Routine Push',
+    label: 'The Routine Push',
     dates: 'Apr 2 – Apr 18',
     overviewHtml: PHASE1_OVERVIEW,
     items: [
@@ -403,7 +404,7 @@ const PHASES = [
   },
   {
     id: 'phase-2',
-    label: "Phase 2 — Mother's Day Collection Boxes",
+    label: "Mother's Day / Collection Gift Boxes",
     dates: 'Apr 18 – May 10',
     overviewHtml: PHASE2_OVERVIEW,
     items: [
@@ -518,6 +519,8 @@ function render() {
     const reviewed = phase.items.filter(item => { const s = reviewsMap[item.id]?.status || 'needs'; return s !== 'needs' && s !== 'not-started'; }).length;
 
     const tr = document.createElement('tr');
+    tr.style.cursor = 'pointer';
+    tr.onclick = () => togglePhase(phase.id);
     tr.innerHTML = `
       <td class="cell-num">${pi + 1}</td>
       <td>
@@ -525,7 +528,7 @@ function render() {
         <div class="cell-dates" id="phase-count-${phase.id}">${phase.dates} &nbsp;·&nbsp; ${reviewed} of ${totalItems} reviewed</div>
       </td>
       <td class="assets-cell">
-        <button class="asset-btn" id="pbtn-${phase.id}" onclick="togglePhase('${phase.id}')">
+        <button class="asset-btn" id="pbtn-${phase.id}">
           View ${totalItems} <span class="asset-chev">▼</span>
         </button>
       </td>`;
