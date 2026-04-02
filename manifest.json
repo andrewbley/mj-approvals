@@ -1,6 +1,6 @@
 {
-  "name": "Approvals",
-  "short_name": "Approvals",
+  "name": "MJ Approvals",
+  "short_name": "MJ Approvals",
   "icons": [
     { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }
