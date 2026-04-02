@@ -220,6 +220,10 @@
     tbody td:last-child { padding-right: 0; }
     .cell-name { font-size: 0.9rem; }
     .asset-btn { font-size: 0.6rem; padding: 0.3rem 0.5rem; letter-spacing: 0.06em; }
+    .sub-item { padding: 0.6rem 0.6rem; }
+    .sub-item-row { gap: 0.4rem; }
+    .sub-view-btn { display: none; }
+    .status-trigger { font-size: 0.6rem; padding: 0.25rem 0.45rem; }
     .flyout { width: 100vw; right: -100vw; }
     .flyout.open { right: 0; }
     .cal-item { grid-template-columns: 1.4rem 5.5rem 1fr; }
@@ -569,7 +573,7 @@ function buildSubItemsHtml(phase) {
       <div class="sub-item ${st.status === 'approved' ? 'approved-row' : ''}${st.status === 'not-started' ? ' not-started-row' : ''}" id="sub-${item.id}">
         <div class="sub-item-row">
           <div class="sub-item-date">${item.date || ''}</div>
-          <div class="sub-item-name-col">
+          <div class="sub-item-name-col" onclick="openItemDrawer('${item.id}')" style="cursor:pointer">
             <div class="sub-item-name">${item.name}</div>
             <div class="sub-item-meta" id="smeta-${item.id}">${smetaText(st)}</div>
           </div>
