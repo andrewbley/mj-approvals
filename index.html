@@ -221,9 +221,12 @@
     .cell-name { font-size: 0.9rem; }
     .asset-btn { font-size: 0.6rem; padding: 0.3rem 0.5rem; letter-spacing: 0.06em; }
     .sub-item { padding: 0.6rem 0.6rem; }
-    .sub-item-row { gap: 0.4rem; }
+    .sub-item-row { flex-wrap: wrap; gap: 0.3rem 0.5rem; }
+    .sub-item-name-col { flex-basis: 100%; }
+    .sub-item-date { order: -1; }
     .sub-view-btn { display: none; }
     .status-trigger { font-size: 0.6rem; padding: 0.25rem 0.45rem; }
+    .status-picker { margin-left: auto; }
     .flyout { width: 100vw; right: -100vw; }
     .flyout.open { right: 0; }
     .cal-item { grid-template-columns: 1.4rem 5.5rem 1fr; }
