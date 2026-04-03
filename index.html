@@ -171,7 +171,11 @@
   .sub-asset-link { display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.65rem; background: var(--cream); border: 1px solid var(--border); border-radius: 2px; text-decoration: none; color: var(--ink-soft); font-size: 0.75rem; transition: border-color 0.15s; }
   .sub-asset-link:hover { border-color: var(--border-mid); color: var(--ink); }
   .sub-asset-link span.icon { font-size: 0.7rem; color: var(--ink-muted); flex-shrink: 0; }
-  .sub-asset-img { width: 100%; height: auto; max-height: 200px; object-fit: cover; border-radius: 2px; border: 1px solid var(--border); display: block; }
+  .sub-asset-img { width: 100%; height: auto; border-radius: 2px; border: 1px solid var(--border); display: block; cursor: zoom-in; }
+  .lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.92); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+  .lightbox.active { opacity: 1; }
+  .lightbox img { max-width: 95vw; max-height: 95vh; object-fit: contain; touch-action: pinch-zoom; }
+  .lightbox-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; line-height: 1; }
   .sub-asset-label { font-size: 0.6rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 0.3rem; }
 
 
@@ -421,7 +425,7 @@ const PHASES = [
       { id: 'phase1-overview',        name: 'Overview',                                    isOverview: true, date: '',       assets: [] },
       { id: 'routine-pdp',            name: 'The Routine Bundle — PDP Page is Live',                date: 'Thu 4/2',  assets: [{ label: 'maveyjaymes.com/products/the-routine', url: 'https://maveyjaymes.com/products/the-routine' }] },
       { id: 'routine-sale-email',     name: 'Sale Begins: The Routine Bundle (Free Gift w/ Purchase)', date: 'Fri 4/3',  assets: [{ label: 'Copy', type: 'image', src: '4-3-26 Copy.jpeg' }, { label: 'Email', type: 'image', src: '4-3-26 Email.jpg' }, { label: 'SMS / IG / FB', type: 'image', src: '4-3-26 SMS_IG_FB.jpg' }] },
-      { id: 'routine-ads',            name: 'Ads Begin Running to The Routine Bundle Page',  date: 'Fri 4/3',  assets: [{ label: 'Ads — 4x5', type: 'image', src: '4-3-26 Ads - 4x5.jpg' }, { label: 'Ads — 9x16', type: 'image', src: '4-3-26 Ads - 9x16.jpg' }, { label: 'Ads — 16x9', type: 'image', src: '4-3-26 Ads - 16x9.jpg' }] },
+      { id: 'routine-ads',            name: 'Ads Begin Running to The Routine Bundle Page',  date: 'Fri 4/3',  assets: [{ label: 'Ads — 4x5', type: 'image', src: '4-3-26 Ads - 4x5.jpg' }, { label: 'Ads — 9x16', type: 'image', src: '4-3-26 Ads - 9x16.jpg' }, { label: 'Ads — 16x9', type: 'image', src: '4-3-26 Ads - 16x9.jpg' }, { label: 'Ads Copy', type: 'image', src: '4-3-26 Ads Copy.jpg' }] },
       { id: 'routine-blog-howto',     name: 'Blog: How to Use the Routine',                  date: 'Sun 4/5',  assets: [] },
       { id: 'routine-sale-reminder',  name: 'Sale Reminder: The Routine Bundle',              date: 'Wed 4/8',  assets: [] },
       { id: 'bathtime-pdp',           name: 'Bathtime Bundle — PDP Page is Live',             date: 'Thu 4/9',  assets: [] },
@@ -816,7 +820,7 @@ function openItemDrawer(itemId) {
     body.innerHTML = phase.overviewHtml;
   } else if (item.assets && item.assets.length) {
     body.innerHTML = item.assets.map(a => a.type === 'image'
-      ? `<div style="margin-bottom:1rem"><div class="sub-asset-label">${a.label}</div><img class="sub-asset-img" src="${a.src}" alt="${a.label}" loading="lazy"></div>`
+      ? `<div style="margin-bottom:1rem"><div class="sub-asset-label">${a.label}</div><img class="sub-asset-img" src="${a.src}" alt="${a.label}" loading="lazy" onclick="openLightbox(this.src, this.alt)"></div>`
       : `<a href="${a.url}" target="_blank" rel="noopener" class="sub-asset-link"><span class="icon">↗</span>${a.label}</a>`
     ).join('');
   } else {
@@ -829,6 +833,15 @@ function openItemDrawer(itemId) {
 function closeItemDrawer() {
   document.getElementById('item-drawer').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
+}
+
+function openLightbox(src, alt) {
+  const lb = document.createElement('div');
+  lb.className = 'lightbox';
+  lb.innerHTML = `<button class="lightbox-close" aria-label="Close">✕</button><img src="${src}" alt="${alt || ''}">`;
+  document.body.appendChild(lb);
+  requestAnimationFrame(() => lb.classList.add('active'));
+  lb.addEventListener('click', e => { if (e.target !== lb.querySelector('img')) { lb.classList.remove('active'); setTimeout(() => lb.remove(), 200); } });
 }
 
 // ── Init ──
