@@ -88,7 +88,7 @@
   /* Inline phase items panel */
   .phase-items-row td { padding: 0; border-bottom: none; }
   .phase-items-row:hover { background: none !important; }
-  .phase-items-panel { overflow: hidden; max-height: 0; transition: max-height 0.38s ease; background: white; border-bottom: 1px solid var(--border-mid); max-width: 100vw; }
+  .phase-items-panel { overflow: hidden; max-height: 0; transition: max-height 0.38s ease; background: white; max-width: 100vw; }
   .phase-items-panel.overflow-visible { overflow: visible; }
   .phase-items-bd { padding: 0.25rem 0 0.5rem; }
 
@@ -221,21 +221,39 @@
     col.col-assets { width: 44px; }
     tbody td { padding-right: 0.4rem; }
     tbody td:last-child { padding-right: 0; }
-    .cell-name { font-size: 1.1rem; }
-    .asset-btn { font-size: 0.75rem; padding: 0.3rem 0.5rem; letter-spacing: 0.06em; }
+    .top h1 { font-size: 1.8rem; }
+    .cell-name { font-size: 1.25rem; }
+    .asset-btn { font-size: 0.82rem; padding: 0.3rem 0.5rem; letter-spacing: 0.06em; }
     .sub-item { padding: 0.45rem 0.5rem; }
     .phase-items-panel { box-sizing: border-box; width: calc(100vw - 2rem); }
-    .sub-item-date { font-size: 0.55rem; min-width: 2.2rem; }
-    .sub-item-name { font-size: 1.05rem; }
+    .sub-item-date { font-size: 0.65rem; min-width: 2.2rem; }
+    .sub-item-name { font-size: 1.15rem; }
     .sub-view-btn { display: none; }
     .status-picker { flex-shrink: 0; }
-    .status-trigger { font-size: 0.72rem; padding: 0.25rem 0.4rem; }
+    .status-trigger { font-size: 0.82rem; padding: 0.3rem 0.45rem; }
     .status-trigger .chev { display: none; }
     .flyout { width: 100vw; right: -100vw; }
     .flyout.open { right: 0; }
     .cal-item { grid-template-columns: 1.4rem 5.5rem 1fr; }
     .item-drawer { width: 100vw; right: -100vw; }
     .item-drawer.open { right: 0; }
+    .item-drawer-title { font-size: 1.5rem; }
+    .item-drawer-close { font-size: 1.3rem; }
+    .comment-author { font-size: 0.82rem; }
+    .comment-date { font-size: 0.78rem; }
+    .comment-text { font-size: 1rem; line-height: 1.6; }
+    .comment-textarea { font-size: 0.95rem; }
+    .drawer-empty { font-size: 0.95rem; }
+    .submit-trigger { font-size: 0.82rem; }
+    .submit-trigger .chev { font-size: 0.55rem; }
+    .sub-asset-link { font-size: 0.95rem; }
+    .sub-asset-link span.icon { font-size: 0.88rem; }
+    .sub-asset-label { font-size: 0.75rem; }
+    .spick-opt { font-size: 0.9rem; padding: 0.65rem 0.85rem; }
+    .spick-name { font-size: 0.9rem; padding: 0.6rem 0.85rem; }
+    .spick-who { font-size: 0.78rem; }
+    .spick-back { font-size: 0.82rem; }
+    .sub-item-meta { font-size: 0.78rem; }
   }
 </style>
 </head>
