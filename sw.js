@@ -11,6 +11,7 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  if (e.request.url.indexOf(self.location.origin) !== 0) return;
   e.respondWith(
     fetch(e.request)
       .then(res => {
