@@ -118,6 +118,7 @@
   .item-drawer-close:hover { color: var(--ink); }
   .item-drawer-bd { flex: 1; overflow-y: auto; padding: 1.4rem 1.6rem 2rem; }
   .drawer-empty { font-size: 0.78rem; color: var(--ink-muted); letter-spacing: 0.04em; }
+  .drawer-thread { margin-bottom: 1.2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
 
   /* Custom status picker */
   .status-picker { position: relative; flex-shrink: 0; }
@@ -425,7 +426,7 @@ const PHASES = [
       { id: 'phase1-overview',        name: 'Overview',                                    isOverview: true, date: '',       assets: [] },
       { id: 'routine-pdp',            name: 'The Routine Bundle — PDP Page is Live',                date: 'Thu 4/2',  assets: [{ label: 'maveyjaymes.com/products/the-routine', url: 'https://maveyjaymes.com/products/the-routine' }] },
       { id: 'routine-sale-email',     name: 'Sale Begins: The Routine Bundle (Free Gift w/ Purchase)', date: 'Fri 4/3',  assets: [{ label: 'Copy', type: 'image', src: '4-3-26 Copy.jpeg' }, { label: 'Email', type: 'image', src: '4-3-26 Email-2.jpg' }, { label: 'SMS / IG / FB', type: 'image', src: '4-3-26 SMS_IG_FB-2.jpg' }] },
-      { id: 'routine-ads',            name: 'Ads Begin Running to The Routine Bundle Page',  date: 'Fri 4/3',  assets: [{ label: 'Ads — 4x5', type: 'image', src: '4-3-26 Ads - 4x5-2.jpg' }, { label: 'Ads — 9x16', type: 'image', src: '4-3-26 Ads - 9x16-2.jpg' }, { label: 'Ads — 16x9', type: 'image', src: '4-3-26 Ads - 16x9-2.jpg' }, { label: 'Ads Copy', type: 'image', src: '4-3-26 Ads Copy.jpg' }] },
+      { id: 'routine-ads',            name: 'Ads Begin Running to The Routine Bundle Page',  date: 'Fri 4/3',  assets: [{ label: 'Ads — 4x5', type: 'image', src: '4-3-26 Ads - 4x5-2.jpg' }, { label: 'Ads — 9x16', type: 'image', src: '4-3-26 Ads - 9x16-3.jpg' }, { label: 'Ads — 16x9', type: 'image', src: '4-3-26 Ads - 16x9-2.jpg' }, { label: 'Ads Copy', type: 'image', src: '4-3-26 Ads Copy.jpg' }] },
       { id: 'routine-blog-howto',     name: 'Blog: How to Use the Routine',                  date: 'Sun 4/5',  assets: [] },
       { id: 'routine-sale-reminder',  name: 'Sale Reminder: The Routine Bundle',              date: 'Wed 4/8',  assets: [] },
       { id: 'bathtime-pdp',           name: 'Bathtime Bundle — PDP Page is Live',             date: 'Thu 4/9',  assets: [] },
@@ -643,31 +644,34 @@ function buildExtraHtml(itemId, st) {
   return '';
 }
 
-function renderThread(itemId, comments) {
+function renderThread(itemId, comments, prefix) {
+  const pfx = prefix || '';
   const names = ['Alyssa P.', 'Andrew B.', 'Chris R.', 'Erin R.'];
   const d = reviewsMap[itemId] || {};
-  const approvalEntry = d.approver ? `
-    <div class="comment comment-approval">
-      <div class="comment-meta"><span class="comment-author" style="color:var(--sage)">✓ ${d.approver}</span><span class="comment-date">${d.approved_at || ''}</span></div>
-      <div class="comment-text" style="color:var(--sage);font-size:0.72rem">Approved</div>
-    </div>` : '';
-  const existing = (comments || []).map(c => `
+  const allEntries = [];
+  (comments || []).forEach(c => allEntries.push(`
     <div class="comment">
       <div class="comment-meta"><span class="comment-author">${c.author}</span><span class="comment-date">${c.date}</span></div>
       <div class="comment-text">${c.text}</div>
-    </div>`).join('');
-  const nameButtons = names.map(n => `<button class="submit-name" onclick="submitComment('${itemId}','${n}')">${n}</button>`).join('');
-  const approveButtons = names.map(n => `<button class="submit-name" onclick="approveFromThread('${itemId}','${n}')">${n}</button>`).join('');
-  return `${approvalEntry}${existing}<div class="add-comment">
-    <textarea class="comment-textarea" id="ctxt-${itemId}" placeholder="Add a comment…"></textarea>
+    </div>`));
+  if (d.approver) allEntries.push(`
+    <div class="comment comment-approval">
+      <div class="comment-meta"><span class="comment-author" style="color:var(--sage)">✓ ${d.approver}</span><span class="comment-date">${d.approved_at || ''}</span></div>
+      <div class="comment-text" style="color:var(--sage);font-size:0.72rem">Approved</div>
+    </div>`);
+  const existing = allEntries.reverse().join('');
+  const nameButtons = names.map(n => `<button class="submit-name" onclick="submitComment('${itemId}','${n}','${pfx}')">${n}</button>`).join('');
+  const approveButtons = names.map(n => `<button class="submit-name" onclick="approveFromThread('${itemId}','${n}','${pfx}')">${n}</button>`).join('');
+  return `${existing}<div class="add-comment">
+    <textarea class="comment-textarea" id="${pfx}ctxt-${itemId}" placeholder="Add a comment…"></textarea>
     <div class="add-comment-actions">
       <div class="submit-picker">
-        <button class="submit-trigger" onclick="togglePanel('subpanel-${itemId}')">Submit <span class="chev">▼</span></button>
-        <div class="submit-panel" id="subpanel-${itemId}">${nameButtons}</div>
+        <button class="submit-trigger" onclick="togglePanel('${pfx}subpanel-${itemId}')">Submit <span class="chev">▼</span></button>
+        <div class="submit-panel" id="${pfx}subpanel-${itemId}">${nameButtons}</div>
       </div>
       <div class="submit-picker">
-        <button class="submit-trigger approve" onclick="togglePanel('aprvpanel-${itemId}')">Approve <span class="chev">▼</span></button>
-        <div class="submit-panel" id="aprvpanel-${itemId}">${approveButtons}</div>
+        <button class="submit-trigger approve" onclick="togglePanel('${pfx}aprvpanel-${itemId}')">Approve <span class="chev">▼</span></button>
+        <div class="submit-panel" id="${pfx}aprvpanel-${itemId}">${approveButtons}</div>
       </div>
     </div>
   </div>`;
@@ -680,16 +684,19 @@ function togglePanel(panelId) {
   document.getElementById(panelId)?.classList.toggle('open');
 }
 
-function approveFromThread(itemId, name) {
+function approveFromThread(itemId, name, prefix) {
   reviewsMap[itemId] = reviewsMap[itemId] || {};
   reviewsMap[itemId].approver = name;
   reviewsMap[itemId].approved_at = todayStr();
   applyStatus(itemId, 'approved');
   saveStructured(itemId);
+  const dt = document.getElementById(`drawer-thread-${itemId}`);
+  if (dt) dt.innerHTML = renderThread(itemId, (reviewsMap[itemId] || {}).comments, 'd-');
 }
 
-function submitComment(itemId, name) {
-  const text = document.getElementById(`ctxt-${itemId}`)?.value?.trim();
+function submitComment(itemId, name, prefix) {
+  const pfx = prefix || '';
+  const text = document.getElementById(`${pfx}ctxt-${itemId}`)?.value?.trim();
   if (!text) return;
   reviewsMap[itemId] = reviewsMap[itemId] || {};
   reviewsMap[itemId].comments = reviewsMap[itemId].comments || [];
@@ -700,6 +707,8 @@ function submitComment(itemId, name) {
     extra.innerHTML = renderThread(itemId, reviewsMap[itemId].comments);
     refreshPanelHeight(itemId);
   }
+  const dt = document.getElementById(`drawer-thread-${itemId}`);
+  if (dt) dt.innerHTML = renderThread(itemId, reviewsMap[itemId].comments, 'd-');
 }
 
 function refreshPanelHeight(itemId) {
@@ -816,15 +825,19 @@ function openItemDrawer(itemId) {
   if (!item) return;
   document.getElementById('id-title').textContent = item.name;
   const body = document.getElementById('id-body');
+  const st = reviewsMap[itemId] || {};
+  const threadHtml = (st.status === 'feedback' || (st.comments && st.comments.length))
+    ? `<div id="drawer-thread-${itemId}" class="drawer-thread">${renderThread(itemId, st.comments, 'd-')}</div>`
+    : '';
   if (item.isOverview && phase.overviewHtml) {
-    body.innerHTML = phase.overviewHtml;
+    body.innerHTML = threadHtml + phase.overviewHtml;
   } else if (item.assets && item.assets.length) {
-    body.innerHTML = item.assets.map(a => a.type === 'image'
+    body.innerHTML = threadHtml + item.assets.map(a => a.type === 'image'
       ? `<div style="margin-bottom:1rem"><div class="sub-asset-label">${a.label}</div><img class="sub-asset-img" src="${a.src}" alt="${a.label}" loading="lazy" onclick="openLightbox(this.src, this.alt)"></div>`
       : `<a href="${a.url}" target="_blank" rel="noopener" class="sub-asset-link"><span class="icon">↗</span>${a.label}</a>`
     ).join('');
   } else {
-    body.innerHTML = '<div class="drawer-empty">No assets have been added yet.</div>';
+    body.innerHTML = threadHtml + '<div class="drawer-empty">No assets have been added yet.</div>';
   }
   document.getElementById('item-drawer').classList.add('open');
   document.getElementById('overlay').classList.add('show');
