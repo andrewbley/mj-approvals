@@ -175,7 +175,8 @@
   .sub-asset-img { width: 100%; height: auto; border-radius: 2px; border: 1px solid var(--border); display: block; cursor: zoom-in; }
   .lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.92); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
   .lightbox.active { opacity: 1; }
-  .lightbox img { max-width: 95vw; max-height: 95vh; object-fit: contain; touch-action: pinch-zoom; }
+  .lightbox img { max-width: 95vw; max-height: 95vh; object-fit: contain; touch-action: pinch-zoom; cursor: zoom-in; transition: transform 0.25s ease; }
+  .lightbox img.zoomed { transform: scale(2); cursor: zoom-out; }
   .lightbox-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; line-height: 1; }
   .sub-asset-label { font-size: 0.6rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 0.3rem; }
 
@@ -889,7 +890,6 @@ function renderUploadGrid(itemId) {
   grid.innerHTML = uploads.map((u, i) =>
     `<div class="upload-thumb">
       <img src="${u.data}" alt="${u.label}" onclick="openLightbox(this.src, this.alt)">
-      <button class="upload-thumb-remove" onclick="removeUpload('${itemId}', ${i})" aria-label="Remove">✕</button>
     </div>`
   ).join('');
 }
@@ -909,7 +909,6 @@ function buildUploadSectionHtml(itemId) {
     <div class="upload-grid" id="upload-grid">${uploads.map((u, i) =>
       `<div class="upload-thumb">
         <img src="${u.data}" alt="${u.label}" onclick="openLightbox(this.src, this.alt)">
-        <button class="upload-thumb-remove" onclick="removeUpload('${itemId}', ${i})" aria-label="Remove">✕</button>
       </div>`
     ).join('')}</div>
   </div>`;
@@ -952,7 +951,9 @@ function openLightbox(src, alt) {
   lb.innerHTML = `<button class="lightbox-close" aria-label="Close">✕</button><img src="${src}" alt="${alt || ''}">`;
   document.body.appendChild(lb);
   requestAnimationFrame(() => lb.classList.add('active'));
-  lb.addEventListener('click', e => { if (e.target !== lb.querySelector('img')) { lb.classList.remove('active'); setTimeout(() => lb.remove(), 200); } });
+  const img = lb.querySelector('img');
+  img.addEventListener('click', e => { e.stopPropagation(); img.classList.toggle('zoomed'); });
+  lb.addEventListener('click', e => { if (e.target !== img) { lb.classList.remove('active'); setTimeout(() => lb.remove(), 200); } });
 }
 
 // ── Init ──
