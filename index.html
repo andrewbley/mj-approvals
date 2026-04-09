@@ -188,8 +188,10 @@
   .upload-grid { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.75rem; }
   .upload-thumb { position: relative; border-radius: 2px; overflow: hidden; border: 1px solid var(--border); aspect-ratio: auto; }
   .upload-thumb img { width: 100%; height: auto; display: block; cursor: zoom-in; }
-  .upload-thumb-remove { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; border-radius: 50%; background: rgba(0,0,0,0.55); color: #fff; border: none; font-size: 0.65rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; transition: background 0.15s; }
-  .upload-thumb-remove:hover { background: rgba(0,0,0,0.8); }
+  .upload-thumb-arrows { position: absolute; top: 4px; right: 4px; display: flex; flex-direction: column; gap: 3px; }
+  .upload-arrow { width: 24px; height: 24px; border-radius: 50%; background: rgba(0,0,0,0.5); color: #fff; border: none; font-size: 0.6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; transition: background 0.15s; }
+  .upload-arrow:hover { background: rgba(0,0,0,0.8); }
+  .upload-arrow:disabled { opacity: 0.3; cursor: default; }
   .upload-processing { font-size: 0.7rem; color: var(--ink-muted); letter-spacing: 0.04em; margin-top: 0.5rem; }
 
   /* Toast */
@@ -268,6 +270,7 @@
     .sub-asset-label { font-size: 0.75rem; }
     .upload-btn { font-size: 0.85rem; padding: 0.7rem 0; }
     .upload-processing { font-size: 0.85rem; }
+    .upload-arrow { width: 30px; height: 30px; font-size: 0.75rem; }
     .spick-opt { font-size: 0.9rem; padding: 0.65rem 0.85rem; }
     .spick-name { font-size: 0.9rem; padding: 0.6rem 0.85rem; }
     .spick-who { font-size: 0.78rem; }
@@ -886,9 +889,14 @@ function renderUploadGrid(itemId) {
   const grid = document.getElementById('upload-grid');
   if (!grid) return;
   const uploads = (reviewsMap[itemId] && reviewsMap[itemId].uploads) || [];
+  const len = uploads.length;
   grid.innerHTML = uploads.map((u, i) =>
     `<div class="upload-thumb">
       <img src="${u.data}" alt="${u.label}" onclick="openLightbox(this.src, this.alt)">
+      ${len > 1 ? `<div class="upload-thumb-arrows">
+        <button class="upload-arrow" onclick="moveUpload('${itemId}',${i},-1)"${i === 0 ? ' disabled' : ''}>▲</button>
+        <button class="upload-arrow" onclick="moveUpload('${itemId}',${i},1)"${i === len - 1 ? ' disabled' : ''}>▼</button>
+      </div>` : ''}
     </div>`
   ).join('');
 }
@@ -900,16 +908,30 @@ function removeUpload(itemId, idx) {
   renderUploadGrid(itemId);
 }
 
+function moveUpload(itemId, idx, dir) {
+  const uploads = reviewsMap[itemId] && reviewsMap[itemId].uploads;
+  if (!uploads) return;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= uploads.length) return;
+  [uploads[idx], uploads[newIdx]] = [uploads[newIdx], uploads[idx]];
+  saveStructured(itemId);
+  renderUploadGrid(itemId);
+}
+
 function buildUploadSectionHtml(itemId) {
   const uploads = (reviewsMap[itemId] && reviewsMap[itemId].uploads) || [];
   return `<div class="upload-section">
     <button class="upload-btn" onclick="document.getElementById('upload-input').click()"><span class="upload-icon">+</span> Upload Images</button>
     <div class="upload-processing" id="upload-processing" style="display:none"></div>
-    <div class="upload-grid" id="upload-grid">${uploads.map((u, i) =>
+    <div class="upload-grid" id="upload-grid">${(() => { const len = uploads.length; return uploads.map((u, i) =>
       `<div class="upload-thumb">
         <img src="${u.data}" alt="${u.label}" onclick="openLightbox(this.src, this.alt)">
+        ${len > 1 ? `<div class="upload-thumb-arrows">
+          <button class="upload-arrow" onclick="moveUpload('${itemId}',${i},-1)"${i === 0 ? ' disabled' : ''}>▲</button>
+          <button class="upload-arrow" onclick="moveUpload('${itemId}',${i},1)"${i === len - 1 ? ' disabled' : ''}>▼</button>
+        </div>` : ''}
       </div>`
-    ).join('')}</div>
+    ).join(''); })()}</div>
   </div>`;
 }
 
