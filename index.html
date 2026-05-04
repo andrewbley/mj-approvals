@@ -72,6 +72,8 @@
   tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; }
   tbody tr:last-child { border-bottom: none; }
   tbody tr:hover { background: rgba(255,255,255,0.55); }
+  tbody tr.phase-row-finished { background: var(--forest-bg); }
+  tbody tr.phase-row-finished:hover { background: #d0dcd2; }
   tbody td { padding: 0.9rem 1rem 0.9rem 0; vertical-align: middle; }
   tbody td:last-child { padding-right: 0; }
 
@@ -445,6 +447,8 @@ const PHASE1_OVERVIEW = `<div style="display:grid;grid-template-columns:1fr 1fr;
 
 const PHASE2_OVERVIEW = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem"><div class="ov-strategy"><div class="ov-strategy-label">Featured products</div><p>All three Collection Gift Boxes, positioned as the ideal Mother's Day gift.</p></div><div class="ov-strategy"><div class="ov-strategy-label">Promotional mechanic</div><p>Tiered multi-box discount: 10% off one, 15% off two, 20% off three. A more aggressive tier up to 25–30% is available — offset by the referral value of new customers acquired through gifting.</p></div></div><div class="ov-strategy" style="padding:0"><div class="ov-strategy-label" style="padding:0.8rem 1.1rem 0.5rem">Content calendar</div><div class="cal-item"><span class="cal-icon">💻</span><span class="cal-date">Fri 4/17/26</span><span class="cal-desc">Webpage: New "Mother's Day Event" PDP is Live — Highlights each box, encourages 2+ purchases. Gift boxes for mom friends: pregnant, newborns, young kids, or moms wanting their own skincare routine.</span></div><div class="cal-item"><span class="cal-icon">📣</span><span class="cal-date">Sat 4/18/26</span><span class="cal-desc">Sale Begins: Collection Boxes for Mother's Day</span></div><div class="cal-item"><span class="cal-icon">💵</span><span class="cal-date">Sat 4/18/26</span><span class="cal-desc">Ads Begin Running to Mother's Day Collection Box Page</span></div><div class="cal-item"><span class="cal-icon">📣</span><span class="cal-date">Tue 4/21/26</span><span class="cal-desc">Blog: What's inside each box?</span></div><div class="cal-item"><span class="cal-icon">📣</span><span class="cal-date">Fri 4/24/26</span><span class="cal-desc">Sale Reminder: Mother's Day Collection Boxes</span></div><div class="cal-item"><span class="cal-icon">📣</span><span class="cal-date">Wed 4/29/26</span><span class="cal-desc">Highlight UGC of people unboxing the Collection Box OR Blog: How to Plan a Mother's Day Party (tie in buying MJ Collection boxes for all guests)</span></div><div class="cal-item"><span class="cal-icon">📣</span><span class="cal-date">Sat 5/2/26</span><span class="cal-desc">Sale Reminder: Last Chance for Mother's Day Delivery</span></div><div class="cal-item" style="border-bottom:none"><span class="cal-icon">📣</span><span class="cal-date">Sun 5/10/26</span><span class="cal-desc">A Celebration of Motherhood: Heartfelt Email — Extending Sale Through Midnight</span></div></div>`;
 
+const PHASE_MEMORIAL_OVERVIEW = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem"><div class="ov-strategy"><div class="ov-strategy-label">Featured products</div><p>All products.</p></div><div class="ov-strategy"><div class="ov-strategy-label">Promotional mechanic</div><p>$35 off $150, $70 off $250, $100 off $325+ — increasing sale amount to incentivize larger purchases.</p></div></div><div class="ov-strategy" style="padding:0"><div class="ov-strategy-label" style="padding:0.8rem 1.1rem 0.5rem">Content calendar</div><div class="cal-item"><span class="cal-icon">📣</span><span class="cal-date">Wed 5/13/26</span><span class="cal-desc">Blog: Is Your Baby Skincare Safe? Why Natural Ingredients Matter</span></div><div class="cal-item"><span class="cal-icon">📣</span><span class="cal-date">Fri 5/15/26</span><span class="cal-desc">IG / FB: Testimony — "This Powder healed my baby!"</span></div><div class="cal-item"><span class="cal-icon">📣</span><span class="cal-date">Sun 5/17/26</span><span class="cal-desc">IG / FB: Testimony (Likely on Scents)</span></div><div class="cal-item"><span class="cal-icon">📣</span><span class="cal-date">Tue 5/19/26</span><span class="cal-desc">IG / FB: Testimony (Likely on Natural Ingredients)</span></div><div class="cal-item"><span class="cal-icon">📣</span><span class="cal-date">Fri 5/22/26</span><span class="cal-desc">Announcement: Memorial Weekend Sale Starts Now!</span></div><div class="cal-item" style="border-bottom:none"><span class="cal-icon">📣</span><span class="cal-date">Mon 5/25/26</span><span class="cal-desc">Announcement: Sale Ends Tonight!</span></div></div>`;
+
 const PHASES = [
   {
     id: 'vendor-approvals',
@@ -494,6 +498,15 @@ const PHASES = [
       { id: 'mday-last-chance',    name: "Last Chance for Mother's Day Delivery",                   date: 'Sun 5/3',  assets: [] },
       { id: 'mday-sale-reminder',  name: "Sale Reminder: Collection Boxes",                         date: 'Thu 5/7',  assets: [] },
       { id: 'mday-final-email',    name: "A Celebration of Motherhood — Extending Sale Through Midnight", date: 'Sun 5/10', assets: [] }
+    ]
+  },
+  {
+    id: 'phase-memorial',
+    label: 'Memorial Weekend Sale',
+    dates: 'May 13 – May 25',
+    overviewHtml: PHASE_MEMORIAL_OVERVIEW,
+    items: [
+      { id: 'memorial-overview', name: 'Overview', isOverview: true, date: '', assets: [] }
     ]
   },
   {
@@ -642,6 +655,7 @@ function render() {
 
     const tr = document.createElement('tr');
     tr.style.cursor = 'pointer';
+    if (isPhaseFinished(phase)) tr.classList.add('phase-row-finished');
     tr.onclick = () => togglePhase(phase.id);
     tr.innerHTML = `
       <td class="cell-num">${pi + 1}</td>
