@@ -25,6 +25,8 @@
     --sage-bg: #EFF4EF;
     --blush: #B8897C;
     --blush-bg: #F5EEEC;
+    --forest: #3D6447;
+    --forest-bg: #DCE7DA;
   }
 
   html, body { height: 100%; font-family: 'Jost', sans-serif; font-weight: 300; background: var(--cream); color: var(--ink); font-size: 14px; letter-spacing: 0.01em; overflow-x: hidden; }
@@ -41,6 +43,7 @@
   /* Tabs */
   /* Approved row highlight */
   .sub-item.approved-row { background: var(--sage-bg); }
+  .sub-item.launched-row { background: var(--forest-bg); }
   /* Not Started row — muted */
   .sub-item.not-started-row .sub-item-name { color: var(--ink-muted); }
   .sub-item.not-started-row .sub-item-date { opacity: 0.45; }
@@ -126,6 +129,7 @@
   .status-trigger .chev { font-size: 0.5rem; display: inline-block; transition: transform 0.2s; }
   .status-trigger.open .chev { transform: rotate(180deg); }
   .status-trigger.approved { background: var(--sage-bg); border-color: rgba(122,158,130,0.5); color: var(--sage); }
+  .status-trigger.launched { background: var(--forest-bg); border-color: rgba(61,100,71,0.5); color: var(--forest); }
   .status-trigger.feedback { background: var(--blush-bg); border-color: rgba(184,137,124,0.5); color: var(--blush); }
   .status-panel { position: absolute; right: 0; top: calc(100% + 4px); background: white; border: 1px solid var(--border-mid); border-radius: 3px; box-shadow: 0 4px 16px rgba(0,0,0,0.09); z-index: 50; display: none; overflow: hidden; width: 240px; }
   .status-panel.open { display: block; }
@@ -135,6 +139,7 @@
   .spick-opt { display: block; width: 100%; text-align: left; font-family: 'Jost', sans-serif; font-size: 0.72rem; font-weight: 300; letter-spacing: 0.03em; color: var(--ink-soft); background: none; border: none; padding: 0.52rem 0.85rem; cursor: pointer; transition: background 0.12s; }
   .spick-opt:hover { background: var(--cream); }
   .spick-opt.opt-approved:hover { background: var(--sage-bg); color: var(--sage); }
+  .spick-opt.opt-launched:hover { background: var(--forest-bg); color: var(--forest); }
   .spick-opt.opt-feedback:hover { background: var(--blush-bg); color: var(--blush); }
   .spick-divider { height: 1px; background: var(--border); }
   .spick-step2-hd { display: flex; align-items: center; gap: 0.5rem; padding: 0.42rem 0.75rem; border-bottom: 1px solid var(--border); }
@@ -143,6 +148,7 @@
   .spick-who { font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); }
   .spick-name { display: block; width: 100%; text-align: left; font-family: 'Jost', sans-serif; font-size: 0.72rem; font-weight: 400; color: var(--ink-soft); background: none; border: none; padding: 0.48rem 0.85rem; cursor: pointer; transition: background 0.12s; }
   .spick-name:hover { background: var(--sage-bg); color: var(--sage); }
+  .spick-name.launch:hover { background: var(--forest-bg); color: var(--forest); }
   /* Sub-item extra (feedback thread) */
   .sub-item-extra { padding: 0.5rem 1rem 0.6rem; }
   .comment + .comment { border-top: 1px solid var(--border); margin-top: 0.5rem; padding-top: 0.5rem; }
@@ -160,6 +166,8 @@
   .submit-trigger:hover { background: white; border-color: var(--ink-soft); }
   .submit-trigger.approve { color: var(--sage); border-color: rgba(122,158,130,0.5); background: var(--sage-bg); }
   .submit-trigger.approve:hover { background: #e0ede0; border-color: var(--sage); }
+  .submit-trigger.launch { color: var(--forest); border-color: rgba(61,100,71,0.5); background: var(--forest-bg); }
+  .submit-trigger.launch:hover { background: #c8d8cc; border-color: var(--forest); }
   .add-comment-actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
   .submit-trigger .chev { font-size: 0.45rem; }
   .submit-panel { position: absolute; bottom: calc(100% + 4px); right: 0; background: white; border: 1px solid var(--border-mid); border-radius: 3px; box-shadow: 0 4px 16px rgba(0,0,0,0.09); z-index: 50; display: none; min-width: 130px; }
@@ -439,6 +447,17 @@ const PHASE2_OVERVIEW = `<div style="display:grid;grid-template-columns:1fr 1fr;
 
 const PHASES = [
   {
+    id: 'vendor-approvals',
+    label: 'Approve or Deny Vendor Proposals',
+    dates: '',
+    overviewHtml: '',
+    items: [
+      { id: 'vendor-cro-analysis',     name: 'Approve or Deny One-Time CRO Analysis ($1,000)',                          date: '', assets: [] },
+      { id: 'vendor-email-management', name: 'Approve or Deny Ongoing Email Management (Compensation via Performance)', date: '', assets: [] },
+      { id: 'vendor-seo',              name: 'Approve or Deny SEO ($1,500 Recurring)',                                  date: '', assets: [] }
+    ]
+  },
+  {
     id: 'phase-1',
     label: 'The Routine Push',
     dates: 'Apr 2 – Apr 25',
@@ -483,8 +502,14 @@ const PHASES = [
     dates: '',
     overviewHtml: '',
     items: [
-      { id: 'pdp-consolidate-fonts', name: 'Consolidate Fonts on PDP Pages', date: '', assets: [] },
-      { id: 'fix-redeploy-opt-in',   name: 'Fix & Redeploy Opt In',          date: '', assets: [] }
+      { id: 'pdp-consolidate-fonts',    name: 'Consolidate Fonts on PDP Pages',                  date: '', assets: [] },
+      { id: 'fix-redeploy-opt-in',      name: 'Fix & Redeploy Opt In',                           date: '', assets: [] },
+      { id: 'powder-title-talc-free',   name: 'Change Powder Title to "Talc-Free Baby Powder"',  date: '', assets: [] },
+      { id: 'satisfaction-guarantee',   name: 'Add a "Satisfaction Guarantee" Badge to All Pages', date: '', assets: [] },
+      { id: 'move-testimony-first',     name: 'Move Testimony First Section',                    date: '', assets: [] },
+      { id: 'travel-wipe-mini-pack',    name: 'Add a Travel Wipe Mini Pack to Every Package',    date: '', assets: [] },
+      { id: 'quiz-rash-eczema',         name: 'Update Quiz to Target Rash / Eczema',             date: '', assets: [] },
+      { id: 'baby-rash-page',           name: 'Build "Baby Rash" Page',                          date: '', assets: [] }
     ]
   }
 ];
@@ -513,15 +538,15 @@ async function sbFetch(path, options = {}) {
 const reviewsMap = {};
 
 function parseFeedback(raw) {
-  if (!raw) return { approver: '', approved_at: '', comments: [], uploads: [] };
+  if (!raw) return { approver: '', approved_at: '', launcher: '', comments: [], uploads: [] };
   try {
     const p = JSON.parse(raw);
     if (p && typeof p === 'object' && !Array.isArray(p)) {
-      return { approver: p.approver || '', approved_at: p.approved_at || '', comments: Array.isArray(p.comments) ? p.comments : [], uploads: Array.isArray(p.uploads) ? p.uploads : [] };
+      return { approver: p.approver || '', approved_at: p.approved_at || '', launcher: p.launcher || '', comments: Array.isArray(p.comments) ? p.comments : [], uploads: Array.isArray(p.uploads) ? p.uploads : [] };
     }
   } catch(e) {}
   // Legacy plain-text feedback → treat as anonymous comment
-  return { approver: '', approved_at: '', comments: raw.trim() ? [{ author: '', text: raw, date: '' }] : [], uploads: [] };
+  return { approver: '', approved_at: '', launcher: '', comments: raw.trim() ? [{ author: '', text: raw, date: '' }] : [], uploads: [] };
 }
 
 async function loadReviews() {
@@ -535,7 +560,7 @@ async function loadReviews() {
 
 function saveStructured(itemId) {
   const d = reviewsMap[itemId] || {};
-  const feedbackJson = JSON.stringify({ approver: d.approver || '', approved_at: d.approved_at || '', comments: d.comments || [], uploads: d.uploads || [] });
+  const feedbackJson = JSON.stringify({ approver: d.approver || '', approved_at: d.approved_at || '', launcher: d.launcher || '', comments: d.comments || [], uploads: d.uploads || [] });
   saveReview(itemId, d.status || 'needs', feedbackJson);
 }
 
@@ -579,11 +604,39 @@ function showToast(msg) {
 }
 
 // ── Render main table ──
+function isPhaseFinished(phase) {
+  if (!phase.items.length) return false;
+  return phase.items.every(item => (reviewsMap[item.id]?.status || 'needs') === 'launched');
+}
+
+function phaseStartKey(phase) {
+  if (!phase.dates) return Infinity;
+  const m = phase.dates.match(/([A-Za-z]{3})\s+(\d+)/);
+  if (!m) return Infinity;
+  const months = { Jan:0, Feb:1, Mar:2, Apr:3, May:4, Jun:5, Jul:6, Aug:7, Sep:8, Oct:9, Nov:10, Dec:11 };
+  const mi = months[m[1]];
+  return mi === undefined ? Infinity : mi * 100 + parseInt(m[2], 10);
+}
+
+function sortedPhases() {
+  return PHASES.map((p, i) => ({ p, i })).sort((a, b) => {
+    const af = isPhaseFinished(a.p) ? 1 : 0;
+    const bf = isPhaseFinished(b.p) ? 1 : 0;
+    if (af !== bf) return af - bf;
+    if (a.p.dates && b.p.dates) {
+      const ad = phaseStartKey(a.p);
+      const bd = phaseStartKey(b.p);
+      if (ad !== bd) return ad - bd;
+    }
+    return a.i - b.i;
+  }).map(x => x.p);
+}
+
 function render() {
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = '';
 
-  PHASES.forEach((phase, pi) => {
+  sortedPhases().forEach((phase, pi) => {
     const totalItems = phase.items.length;
     const reviewed = phase.items.filter(item => { const s = reviewsMap[item.id]?.status || 'needs'; return s !== 'needs' && s !== 'not-started'; }).length;
 
@@ -623,6 +676,7 @@ function updateProgress() {
 // ── Inline phase toggle ──
 function smetaText(st) {
   if (st.status === 'approved' && st.approver) return `Approved by ${st.approver} on ${st.approved_at}`;
+  if (st.status === 'launched' && st.launcher) return `Launched by ${st.launcher}`;
   if (st.status === 'feedback') {
     const n = st.comments?.length || 0;
     const last = st.comments?.[n - 1];
@@ -635,7 +689,7 @@ function buildSubItemsHtml(phase) {
   return phase.items.map(item => {
     const st = reviewsMap[item.id] || { status: 'needs', approver: '', approved_at: '', comments: [] };
     return `
-      <div class="sub-item ${st.status === 'approved' ? 'approved-row' : ''}${st.status === 'not-started' ? ' not-started-row' : ''}" id="sub-${item.id}">
+      <div class="sub-item ${st.status === 'approved' ? 'approved-row' : ''}${st.status === 'launched' ? ' launched-row' : ''}${st.status === 'not-started' ? ' not-started-row' : ''}" id="sub-${item.id}">
         <div class="sub-item-row">
           <div class="sub-item-date">${item.date || ''}</div>
           <div class="sub-item-name-col" onclick="openItemDrawer('${item.id}')" style="cursor:pointer">
@@ -648,6 +702,8 @@ function buildSubItemsHtml(phase) {
               <div class="status-steps" id="ssteps-${item.id}">
                 <div class="status-step">
                   <button class="spick-opt opt-approved" onclick="chooseStatus('${item.id}','approved')">Approved ›</button>
+                  <div class="spick-divider"></div>
+                  <button class="spick-opt opt-launched" onclick="chooseStatus('${item.id}','launched')">Launched ›</button>
                   <div class="spick-divider"></div>
                   <button class="spick-opt" onclick="chooseStatus('${item.id}','needs')">Needs Review</button>
                   <div class="spick-divider"></div>
@@ -666,12 +722,15 @@ function buildSubItemsHtml(phase) {
   }).join('');
 }
 
-function buildApproverStepHtml(itemId) {
-  const names = ['Alyssa P.', 'Andrew B.', 'Chris R.', 'Erin R.'];
+function buildPersonStepHtml(itemId, kind) {
+  const names = ['Alyssa P.', 'Andrew B.', 'Chris R.', 'Erin R.', 'James O.'];
+  const fn = kind === 'launch' ? 'chooseLauncher' : 'chooseApprover';
+  const cls = kind === 'launch' ? 'spick-name launch' : 'spick-name';
+  const label = kind === 'launch' ? 'Launching as' : 'Approving as';
   return `<div class="spick-step2-hd">
     <button class="spick-back" onclick="stepBack('${itemId}')">← back</button>
-    <span class="spick-who">Approving as</span>
-  </div>${names.map(n => `<button class="spick-name" onclick="chooseApprover('${itemId}','${n}')">${n}</button>`).join('')}`;
+    <span class="spick-who">${label}</span>
+  </div>${names.map(n => `<button class="${cls}" onclick="${fn}('${itemId}','${n}')">${n}</button>`).join('')}`;
 }
 
 function buildExtraHtml(itemId, st) {
@@ -681,7 +740,7 @@ function buildExtraHtml(itemId, st) {
 
 function renderThread(itemId, comments, prefix) {
   const pfx = prefix || '';
-  const names = ['Alyssa P.', 'Andrew B.', 'Chris R.', 'Erin R.'];
+  const names = ['Alyssa P.', 'Andrew B.', 'Chris R.', 'Erin R.', 'James O.'];
   const d = reviewsMap[itemId] || {};
   const allEntries = [];
   (comments || []).forEach(c => allEntries.push(`
@@ -694,9 +753,15 @@ function renderThread(itemId, comments, prefix) {
       <div class="comment-meta"><span class="comment-author" style="color:var(--sage)">✓ ${d.approver}</span><span class="comment-date">${d.approved_at || ''}</span></div>
       <div class="comment-text" style="color:var(--sage);font-size:0.72rem">Approved</div>
     </div>`);
+  if (d.launcher) allEntries.push(`
+    <div class="comment comment-launch">
+      <div class="comment-meta"><span class="comment-author" style="color:var(--forest)">✓ ${d.launcher}</span></div>
+      <div class="comment-text" style="color:var(--forest);font-size:0.72rem">Launched</div>
+    </div>`);
   const existing = allEntries.reverse().join('');
   const nameButtons = names.map(n => `<button class="submit-name" onclick="submitComment('${itemId}','${n}','${pfx}')">${n}</button>`).join('');
   const approveButtons = names.map(n => `<button class="submit-name" onclick="approveFromThread('${itemId}','${n}','${pfx}')">${n}</button>`).join('');
+  const launchButtons = names.map(n => `<button class="submit-name" onclick="launchFromThread('${itemId}','${n}','${pfx}')">${n}</button>`).join('');
   return `${existing}<div class="add-comment">
     <textarea class="comment-textarea" id="${pfx}ctxt-${itemId}" placeholder="Add a comment…"></textarea>
     <div class="add-comment-actions">
@@ -707,6 +772,10 @@ function renderThread(itemId, comments, prefix) {
       <div class="submit-picker">
         <button class="submit-trigger approve" onclick="togglePanel('${pfx}aprvpanel-${itemId}')">Approve <span class="chev">▼</span></button>
         <div class="submit-panel" id="${pfx}aprvpanel-${itemId}">${approveButtons}</div>
+      </div>
+      <div class="submit-picker">
+        <button class="submit-trigger launch" onclick="togglePanel('${pfx}lnchpanel-${itemId}')">Launch <span class="chev">▼</span></button>
+        <div class="submit-panel" id="${pfx}lnchpanel-${itemId}">${launchButtons}</div>
       </div>
     </div>
   </div>`;
@@ -724,6 +793,15 @@ function approveFromThread(itemId, name, prefix) {
   reviewsMap[itemId].approver = name;
   reviewsMap[itemId].approved_at = todayStr();
   applyStatus(itemId, 'approved');
+  saveStructured(itemId);
+  const dt = document.getElementById(`drawer-thread-${itemId}`);
+  if (dt) dt.innerHTML = renderThread(itemId, (reviewsMap[itemId] || {}).comments, 'd-');
+}
+
+function launchFromThread(itemId, name, prefix) {
+  reviewsMap[itemId] = reviewsMap[itemId] || {};
+  reviewsMap[itemId].launcher = name;
+  applyStatus(itemId, 'launched');
   saveStructured(itemId);
   const dt = document.getElementById(`drawer-thread-${itemId}`);
   if (dt) dt.innerHTML = renderThread(itemId, (reviewsMap[itemId] || {}).comments, 'd-');
@@ -763,6 +841,7 @@ let openPickerId = null;
 
 function statusLabel(val) {
   if (val === 'approved') return 'Approved';
+  if (val === 'launched') return 'Launched';
   if (val === 'feedback') return 'Feedback Provided';
   if (val === 'not-started') return 'Not Started';
   return 'Needs Review';
@@ -788,8 +867,8 @@ function closeStatusPicker(itemId) {
 }
 
 function chooseStatus(itemId, val) {
-  if (val === 'approved') {
-    document.getElementById(`sstep2-${itemId}`).innerHTML = buildApproverStepHtml(itemId);
+  if (val === 'approved' || val === 'launched') {
+    document.getElementById(`sstep2-${itemId}`).innerHTML = buildPersonStepHtml(itemId, val === 'launched' ? 'launch' : 'approve');
     document.getElementById(`ssteps-${itemId}`).classList.add('at-2');
     return;
   }
@@ -806,6 +885,14 @@ function chooseApprover(itemId, name) {
   closeStatusPicker(itemId);
 }
 
+function chooseLauncher(itemId, name) {
+  reviewsMap[itemId] = reviewsMap[itemId] || {};
+  reviewsMap[itemId].launcher = name;
+  applyStatus(itemId, 'launched');
+  saveStructured(itemId);
+  closeStatusPicker(itemId);
+}
+
 function applyStatus(itemId, val) {
   reviewsMap[itemId] = reviewsMap[itemId] || {};
   reviewsMap[itemId].status = val;
@@ -814,6 +901,7 @@ function applyStatus(itemId, val) {
   const subEl = document.getElementById(`sub-${itemId}`);
   if (subEl) {
     subEl.classList.toggle('approved-row', val === 'approved');
+    subEl.classList.toggle('launched-row', val === 'launched');
     subEl.classList.toggle('not-started-row', val === 'not-started');
   }
   const smeta = document.getElementById(`smeta-${itemId}`);
@@ -833,6 +921,19 @@ function applyStatus(itemId, val) {
     if (countEl) countEl.innerHTML = `${phase.dates} &nbsp;·&nbsp; ${reviewed} of ${phase.items.length} reviewed`;
   }
   updateProgress();
+  reorderPhasesIfNeeded();
+}
+
+function reorderPhasesIfNeeded() {
+  const targetOrder = sortedPhases().map(p => p.id);
+  const currentOrder = Array.from(document.querySelectorAll('button.asset-btn')).map(b => b.id.replace('pbtn-', ''));
+  if (targetOrder.join('|') === currentOrder.join('|')) return;
+  const openIds = currentOrder.filter(id => document.getElementById(`pbtn-${id}`)?.classList.contains('open'));
+  render();
+  openIds.forEach(id => {
+    const btn = document.getElementById(`pbtn-${id}`);
+    if (btn && !btn.classList.contains('open')) togglePhase(id);
+  });
 }
 
 
@@ -968,9 +1069,7 @@ function openItemDrawer(itemId) {
   document.getElementById('id-title').textContent = item.name;
   const body = document.getElementById('id-body');
   const st = reviewsMap[itemId] || {};
-  const threadHtml = (st.status === 'feedback' || (st.comments && st.comments.length))
-    ? `<div id="drawer-thread-${itemId}" class="drawer-thread">${renderThread(itemId, st.comments, 'd-')}</div>`
-    : '';
+  const threadHtml = `<div id="drawer-thread-${itemId}" class="drawer-thread">${renderThread(itemId, st.comments, 'd-')}</div>`;
   currentDrawerItemId = itemId;
   const uploadHtml = item.isOverview ? '' : buildUploadSectionHtml(itemId);
   if (item.isOverview && phase.overviewHtml) {
